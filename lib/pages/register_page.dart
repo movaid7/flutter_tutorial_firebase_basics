@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -12,23 +13,33 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   // controllers for the text fields
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPassController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _confirmPassController = TextEditingController();
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
+  final _ageController = TextEditingController();
 
   // signIn function
   Future signUp() async {
     // check if the email and password fields are valid
-    if (_emailController.text.isNotEmpty &&
-        _passwordController.text.isNotEmpty &&
-        _confirmPassController.text == _passwordController.text) {
+    if (checksPassed) {
       try {
-        // sign in the user
+        // create the user
         await FirebaseAuth.instance
             .createUserWithEmailAndPassword(
                 email: _emailController.text.trim(),
                 password: _passwordController.text)
-            .then((value) => print("Signed In"));
+            .then((value) {
+          print("User Created");
+          // add user details to the database
+          addUserDetails(
+            email: _emailController.text.trim(),
+            firstName: _firstNameController.text.trim(),
+            lastName: _lastNameController.text.trim(),
+            age: int.tryParse(_ageController.text.trim()) ?? 0,
+          );
+        });
       } on FirebaseAuthException catch (e) {
         if (e.code == 'weak-password') {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -45,7 +56,6 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
           );
         } else {
-          print(e);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(e.message.toString(), textAlign: TextAlign.center),
@@ -73,11 +83,42 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
+  bool get checksPassed {
+    return _emailController.text.isNotEmpty &&
+        _passwordController.text.isNotEmpty &&
+        _confirmPassController.text == _passwordController.text &&
+        _firstNameController.text.isNotEmpty &&
+        _lastNameController.text.isNotEmpty &&
+        _ageController.text.isNotEmpty;
+  }
+
+  // method to add user details to the database
+  Future addUserDetails({
+    required String email,
+    required String firstName,
+    required String lastName,
+    required int age,
+  }) async {
+    // get the current user and uid
+    final User? user = FirebaseAuth.instance.currentUser;
+    final String uid = user!.uid.toString();
+    // create a new document in the users collection
+    await FirebaseFirestore.instance.collection('users').doc(uid).set({
+      'email': email,
+      'firstName': firstName,
+      'lastName': lastName,
+      'age': age,
+    });
+  }
+
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPassController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    _ageController.dispose();
     super.dispose();
   }
 
@@ -93,13 +134,6 @@ class _RegisterPageState extends State<RegisterPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // add logo icon from internet - https://www.flaticon.com/
-                  const Image(
-                    image: NetworkImage(
-                        'https://freesvg.org/img/1610637144logo-element-color-shape.png'),
-                    height: 150,
-                    width: 150,
-                  ),
                   const SizedBox(height: 20),
                   Text(
                     'Hello There',
@@ -110,7 +144,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     'Register below to get started!',
                     style: TextStyle(fontSize: 20),
                   ),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 20),
                   Container(
                     decoration: BoxDecoration(
                       color: Colors.grey[200],
@@ -120,6 +154,62 @@ class _RegisterPageState extends State<RegisterPage> {
                     child: Padding(
                       padding: const EdgeInsets.only(left: 16.0),
                       child: TextField(
+                        controller: _firstNameController,
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'First Name',
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      border: Border.all(color: Colors.white),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 16.0),
+                      child: TextField(
+                        controller: _lastNameController,
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Last Name',
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      border: Border.all(color: Colors.white),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 16.0),
+                      child: TextField(
+                        keyboardType: TextInputType.number,
+                        controller: _ageController,
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Age',
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      border: Border.all(color: Colors.white),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 16.0),
+                      child: TextField(
+                        keyboardType: TextInputType.emailAddress,
                         controller: _emailController,
                         decoration: const InputDecoration(
                           border: InputBorder.none,
@@ -138,6 +228,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     child: Padding(
                       padding: const EdgeInsets.only(left: 16.0),
                       child: TextField(
+                        keyboardType: TextInputType.visiblePassword,
                         controller: _passwordController,
                         obscureText: true,
                         decoration: const InputDecoration(
@@ -157,6 +248,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     child: Padding(
                       padding: const EdgeInsets.only(left: 16.0),
                       child: TextField(
+                        keyboardType: TextInputType.visiblePassword,
                         controller: _confirmPassController,
                         obscureText: true,
                         decoration: const InputDecoration(

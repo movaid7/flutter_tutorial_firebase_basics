@@ -92,7 +92,7 @@ class _LoginPageState extends State<LoginPage> {
                     height: 150,
                     width: 150,
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 15),
                   Text(
                     'Hello Again',
                     style: GoogleFonts.bebasNeue(fontSize: 52),
@@ -102,7 +102,7 @@ class _LoginPageState extends State<LoginPage> {
                     'Welcome back, you\'ve been missed!',
                     style: TextStyle(fontSize: 20),
                   ),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 20),
                   Container(
                     decoration: BoxDecoration(
                       color: Colors.grey[200],
