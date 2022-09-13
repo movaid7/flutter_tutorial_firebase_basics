@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_basics/pages/forgot_password_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -47,9 +48,8 @@ class _LoginPageState extends State<LoginPage> {
         } else {
           print(e);
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content:
-                  Text('Something went wrong', textAlign: TextAlign.center),
+            SnackBar(
+              content: Text(e.message.toString(), textAlign: TextAlign.center),
             ),
           );
         }
@@ -139,7 +139,29 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 25),
+                  const SizedBox(height: 5),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) {
+                            return const ForgotPasswordPage();
+                          }));
+                        },
+                        child: const Text(
+                          'Forgot Password?',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.deepPurple,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 15),
                   GestureDetector(
                     onTap: signIn,
                     child: Container(

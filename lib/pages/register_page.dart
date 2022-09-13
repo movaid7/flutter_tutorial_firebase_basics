@@ -47,9 +47,8 @@ class _RegisterPageState extends State<RegisterPage> {
         } else {
           print(e);
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content:
-                  Text('Something went wrong', textAlign: TextAlign.center),
+            SnackBar(
+              content: Text(e.message.toString(), textAlign: TextAlign.center),
             ),
           );
         }
