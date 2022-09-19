@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_basics/read_data/get_user_name.dart';
+import 'package:firebase_basics/widgets/navigation_drawer.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -34,6 +35,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const NavigationDrawer(),
       appBar: AppBar(
         centerTitle: true,
         title: Text('${user.email}',
@@ -88,3 +90,5 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+
+
