@@ -17,6 +17,7 @@ dependencies:
   cloud_firestore: ^3.4.7
   firebase_analytics: ^9.3.5
   number_selector: ^1.0.3
+  firebase_messaging: ^13.0.2
 
 dev_dependencies:
   flutter_test:

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_basics/read_data/get_user_name.dart';
 import 'package:firebase_basics/widgets/navigation_drawer.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -12,6 +13,61 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  //
+  String? mToken = "";
+  // late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+  // ==============================================================
+
+  @override
+  void initState() {
+    super.initState();
+    requestPermission();
+    getToken();
+    getDocIDs();
+  }
+
+  void requestPermission() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
+
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      print('User granted permission');
+    } else if (settings.authorizationStatus ==
+        AuthorizationStatus.provisional) {
+      print('User granted provisional permission');
+    } else {
+      print('User declined or has not accepted permission');
+    }
+  }
+
+  void getToken() async {
+    await FirebaseMessaging.instance.getToken().then((token) {
+      setState(() {
+        mToken = token;
+        print("Token: $mToken");
+      });
+      saveToken(token!);
+    });
+  }
+
+  void saveToken(String token) async {
+    await FirebaseFirestore.instance
+        .collection("UserTokens")
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .set({"token": token});
+  }
+  // ==============================================================
+
   // doc IDs
   List<String> docIDs = [];
 
@@ -90,5 +146,3 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
-
-
