@@ -22,6 +22,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     getDocIDs();
+    requestPermission();
     checkToken();
   }
 
@@ -80,7 +81,6 @@ class _HomePageState extends State<HomePage> {
         });
       } else {
         print("Token does not exist");
-        requestPermission();
         getToken();
       }
     });
@@ -147,13 +147,7 @@ class _HomePageState extends State<HomePage> {
                         itemBuilder: (context, index) {
                           // fetch first name for each doc ID
 
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8),
-                            child: ListTile(
-                              title: GetUserName(docID: docIDs[index]),
-                              tileColor: Colors.grey[200],
-                            ),
-                          );
+                          return UserTile(docID: docIDs[index]);
                         },
                       );
                     }
