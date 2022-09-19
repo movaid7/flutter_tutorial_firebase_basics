@@ -15,16 +15,14 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   //
   String? mToken = "";
-  // late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
   // ==============================================================
 
   @override
   void initState() {
     super.initState();
-    requestPermission();
-    getToken();
     getDocIDs();
+    checkToken();
   }
 
   void requestPermission() async {
@@ -66,6 +64,28 @@ class _HomePageState extends State<HomePage> {
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .set({"token": token});
   }
+
+  // check if the user has a token, if not, generate one and save it to the database
+  void checkToken() async {
+    final user = FirebaseAuth.instance.currentUser;
+    final snapshot = await FirebaseFirestore.instance
+        .collection('UserTokens')
+        .doc(user!.uid)
+        .get()
+        .then((value) {
+      if (value.exists) {
+        setState(() {
+          mToken = value.data()!['token'];
+          print("Token: $mToken");
+        });
+      } else {
+        print("Token does not exist");
+        requestPermission();
+        getToken();
+      }
+    });
+  }
+
   // ==============================================================
 
   // doc IDs
@@ -73,6 +93,7 @@ class _HomePageState extends State<HomePage> {
 
   // get all doc IDs
   Future getDocIDs() async {
+    print('Getting doc IDs...');
     docIDs = [];
     final user = FirebaseAuth.instance.currentUser;
     final snapshot = await FirebaseFirestore.instance
@@ -83,7 +104,7 @@ class _HomePageState extends State<HomePage> {
       for (var element in value.docs) {
         docIDs.add(element.id);
       }
-      print(docIDs);
+      print('Doc IDs: $docIDs');
     });
   }
 
