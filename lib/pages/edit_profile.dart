@@ -16,16 +16,15 @@ class _EditProfileState extends State<EditProfile> {
   // controllers for the text fields
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
-  final TextEditingController _ageController = TextEditingController();
   String _emailAddress = '';
+  String _age = '0';
 
   // update profile function
   Future updateProfile() async {
     // check if the fields are valid
     if (_firstNameController.text.isNotEmpty &&
         _lastNameController.text.isNotEmpty &&
-        _ageController.text.isNotEmpty &&
-        int.tryParse(_ageController.text) != null) {
+        int.parse(_age) > 17) {
       // get the current user
       User? user = FirebaseAuth.instance.currentUser;
 
@@ -36,7 +35,7 @@ class _EditProfileState extends State<EditProfile> {
           .update({
         'firstName': _firstNameController.text.trim(),
         'lastName': _lastNameController.text.trim(),
-        'age': int.tryParse(_ageController.text) ?? 0,
+        'age': int.parse(_age),
       }).then((value) => print("Profile Updated"));
 
       // show a snackbar
@@ -52,20 +51,19 @@ class _EditProfileState extends State<EditProfile> {
       );
     }
     // else show a snackbar
-    else if (_ageController.text.isNotEmpty &&
-        int.tryParse(_ageController.text) == null) {
+    else if (int.parse(_age) < 18) {
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Age must be a number', textAlign: TextAlign.center),
+          content: Text('Age must be >= 18', textAlign: TextAlign.center),
         ),
       );
     } else {
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Please fill in all the fields',
-              textAlign: TextAlign.center),
+          content:
+              Text('Please fill in all fields', textAlign: TextAlign.center),
         ),
       );
     }
@@ -84,10 +82,12 @@ class _EditProfileState extends State<EditProfile> {
         .then((DocumentSnapshot documentSnapshot) {
       if (documentSnapshot.exists) {
         // set the text fields to the user's profile data
-        _firstNameController.text = documentSnapshot['firstName'];
-        _lastNameController.text = documentSnapshot['lastName'];
-        _ageController.text = documentSnapshot['age'].toString();
-        _emailAddress = documentSnapshot['email'];
+        setState(() {
+          _firstNameController.text = documentSnapshot['firstName'];
+          _lastNameController.text = documentSnapshot['lastName'];
+          _emailAddress = documentSnapshot['email'];
+          _age = documentSnapshot['age'].toString();
+        });
       }
     });
   }
@@ -119,21 +119,24 @@ class _EditProfileState extends State<EditProfile> {
                 ),
               ),
             ),
-            const SizedBox(height: 24.0),
+            const SizedBox(height: 30),
             const Text('Edit First Name', style: TextStyle(fontSize: 14.0)),
             TextField(controller: _firstNameController),
 
-            const SizedBox(height: 24.0),
+            const SizedBox(height: 30),
             const Text('Edit Last Name', style: TextStyle(fontSize: 14.0)),
             TextField(controller: _lastNameController),
 
-            const SizedBox(height: 24.0),
+            const SizedBox(height: 30),
             const Text('Edit Age', style: TextStyle(fontSize: 14.0)),
+            // TODO: Fix the number selector
             Center(
               child: NumberSelector(
                 height: 50,
                 width: 180,
-                current: int.parse(_ageController.text),
+                min: 0,
+                max: 100,
+                current: int.parse(_age),
                 backgroundColor: Colors.transparent,
                 incrementIcon: Icons.add,
                 decrementIcon: Icons.remove,
@@ -141,8 +144,11 @@ class _EditProfileState extends State<EditProfile> {
                 hasBorder: false,
                 hasDividers: false,
                 hasCenteredText: true,
+                showMinMax: false,
                 onUpdate: (val) {
-                  _ageController.text = val.toString();
+                  setState(() {
+                    _age = val.toString();
+                  });
                 },
               ),
             ),
