@@ -15,9 +15,14 @@ class _LoginPageState extends State<LoginPage> {
   // controllers for the text fields
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool isLoading = false;
 
   // signIn function
   Future signIn() async {
+    setState(() {
+      isLoading = true;
+    });
+
     // check if the email and password fields are valid
     if (_emailController.text.isNotEmpty &&
         _passwordController.text.isNotEmpty) {
@@ -64,6 +69,9 @@ class _LoginPageState extends State<LoginPage> {
         ),
       );
     }
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
@@ -163,22 +171,32 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   const SizedBox(height: 15),
                   GestureDetector(
-                    onTap: signIn,
+                    onTap: isLoading ? null : signIn,
                     child: Container(
                       padding: const EdgeInsets.all(18),
                       decoration: BoxDecoration(
                         color: Colors.deepPurple,
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Center(
-                        child: Text(
-                          'Sign In',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 20,
-                          ),
-                        ),
+                      child: Center(
+                        child: isLoading
+                            ? const SizedBox(
+                                height: 25,
+                                width: 25,
+                                child: CircularProgressIndicator(
+                                    color: Colors.white),
+                              )
+                            : const SizedBox(
+                                height: 25,
+                                child: Text(
+                                  'Sign In',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 20,
+                                  ),
+                                ),
+                              ),
                       ),
                     ),
                   ),
