@@ -20,6 +20,7 @@ class _HomePageState extends State<HomePage> {
     final user = FirebaseAuth.instance.currentUser;
     final snapshot = await FirebaseFirestore.instance
         .collection('users')
+        .orderBy('age', descending: true)
         .get()
         .then((value) {
       for (var element in value.docs) {
