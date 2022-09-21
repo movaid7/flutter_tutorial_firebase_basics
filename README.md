@@ -1,16 +1,31 @@
-# firebase_basics
+# Flutter × Firebase
 
-A new Flutter project.
+### Based on (playlist)
 
-## Getting Started
+[![Flutter × Firebase](https://img.youtube.com/vi/PBxbWZZTG2Q/0.jpg)](https://www.youtube.com/playlist?list=PLlvRDpXh1Se4wZWOWs8yapI8AS_fwDHzf "Flutter × Firebase")
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
+### Learnings
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- Setting up Firebase with a Flutter app using the FlutterFire CLI as per [Firebase docs](https://firebase.google.com/docs/flutter/setup)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- Authenticating users with Firebase Autentication
+  - Sign in and register new users
+  - Forgot and reset password
+  
+- CRUD operations on Firestore Database data
+  - Setting the users UID as documentID when writing data; for easier lookups
+  
+    ```dart
+    .doc(FirebaseAuth.instance.currentUser!.uid)
+    ```
+
+- Retrieving, storing and referencing device token for Firebase Cloud Messaging (FCM) - app notifications
+  - iOS requires additional config to request notification permission from user
+  
+    Alternatively [Provisional authorization](https://firebase.flutter.dev/docs/messaging/permissions/#provisional-authorization) can be used
+    ```dart
+    NotificationSettings settings = await messaging.requestPermission(provisional: true);
+    ```
+
+-  Handling of Firebase errors on the frontend (e.g. incorrect password length, invalid email address)
