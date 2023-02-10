@@ -1,8 +1,8 @@
+import 'package:firebase_basics/test_form.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'package:firebase_basics/firebase_options.dart';
-import 'package:firebase_basics/auth/main_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.deepPurple),
-      home: const MainPage(),
+      home: const TestForm(),
     );
   }
 }

@@ -2,8 +2,8 @@ import 'package:firebase_basics/auth/main_page.dart';
 import 'package:firebase_basics/pages/edit_profile.dart';
 import 'package:flutter/material.dart';
 
-class NavigationDrawer extends StatelessWidget {
-  const NavigationDrawer({Key? key}) : super(key: key);
+class MyNavigationDrawer extends StatelessWidget {
+  const MyNavigationDrawer({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

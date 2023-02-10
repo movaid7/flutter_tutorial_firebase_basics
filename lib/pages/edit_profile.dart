@@ -104,7 +104,7 @@ class _EditProfileState extends State<EditProfile> {
       appBar: AppBar(
         title: const Text('Edit Profile'),
       ),
-      drawer: const NavigationDrawer(),
+      drawer: const MyNavigationDrawer(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

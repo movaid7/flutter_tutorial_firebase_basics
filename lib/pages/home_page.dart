@@ -112,7 +112,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: const NavigationDrawer(),
+      drawer: const MyNavigationDrawer(),
       appBar: AppBar(
         centerTitle: true,
         title: Text('${user.email}',

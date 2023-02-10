@@ -53,6 +53,7 @@ class DefaultFirebaseOptions {
     projectId: 'fir-basics-d9147',
     authDomain: 'fir-basics-d9147.firebaseapp.com',
     storageBucket: 'fir-basics-d9147.appspot.com',
+    measurementId: 'G-88HN1BJ8ZQ',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
